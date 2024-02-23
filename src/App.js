@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 
 import ImageCard from './components/ImageCard';
+import ImageSearch from './components/ImageSearch';
 
-function App() {
+const App = () => {
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [term, setTerm] = useState('');
+  const [isInitial, setIsInitial] = useState(true);
+
+  const querySearchHandler = (query) => {
+    setTerm(query);
+  };
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -24,17 +30,28 @@ function App() {
       }
     };
 
-    fetchImage().then((response) => {
-      setImages(response.hits);
-      setIsLoading(false);
-    });
+    if (!isInitial) {
+      setIsLoading(true);
+
+      fetchImage().then((response) => {
+        setImages(response.hits.length ? response.hits : []);
+        setIsLoading(false);
+      });
+    }
+
+    setIsLoading(false);
+    setIsInitial(false);
   }, [term]);
 
   return (
     <div className='container mx-auto'>
-      {isLoading ? (
-        <h1 className='text-center text-6xl mx-auto mt-32'>Loading...</h1>
-      ) : (
+      <ImageSearch onQuerySearch={querySearchHandler} />
+      {isLoading && (
+        <h1 className='text-center text-2xl font-normal text-teal-500 mt-32'>
+          Loading...
+        </h1>
+      )}
+      {!isLoading && images.length ? (
         <div className='grid grid-cols-3 gap-4'>
           {images.map(
             ({ id, tags, views, downloads, likes, webformatURL, user }) => (
@@ -50,9 +67,13 @@ function App() {
             )
           )}
         </div>
+      ) : (
+        <h1 className='text-center text-3xl font-semibold  text-teal-500'>
+          No Images Found
+        </h1>
       )}
     </div>
   );
-}
+};
 
 export default App;
