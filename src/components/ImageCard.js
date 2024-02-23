@@ -1,4 +1,4 @@
-const ImageCard = ({ tags, views, downloads, likes, webformatURL }) => {
+const ImageCard = ({ tags, views, downloads, likes, webformatURL, user }) => {
   const imageTags = tags.split(', ');
 
   return (
@@ -6,7 +6,7 @@ const ImageCard = ({ tags, views, downloads, likes, webformatURL }) => {
       <img src={`${webformatURL}`} alt='' className='w-full' />
       <div className='px-6 py-4'>
         <div className='font-bold text-purple-500 text-xl mb-2'>
-          Photo by John Doe
+          Photo by {user}
         </div>
         <ul>
           <li>
